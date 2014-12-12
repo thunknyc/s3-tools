@@ -4,7 +4,7 @@
 (defn- adjust-options
   [options new-marker n-read]
   (-> (if (contains? options :max-keys)
-        (assoc options :max-keys - n-read)
+        (update-in options [:max-keys] - n-read)
         options)
     (assoc :marker new-marker)))
 
