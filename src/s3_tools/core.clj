@@ -43,4 +43,5 @@
       (if (seq xs)
         (do (a/>! ch (first xs))
             (recur (rest xs)))
-        (a/close! ch)))))
+        (a/close! ch)))
+    ch))
