@@ -1,4 +1,4 @@
-(defproject thunknyc.s3-tools "0.2.0-SNAPSHOT"
+(defproject thunknyc.s3-tools "0.2.0"
   :description "Supplemental tools for AWS S3 in Clojure."
   :url "http://github.com/thunknyc/s3-tools"
   :license {:name "Eclipse Public License"
