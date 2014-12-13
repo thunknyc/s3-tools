@@ -1,5 +1,6 @@
 (ns s3-tools.core
-  (:require [aws.sdk.s3 :as s3]))
+  (:require [aws.sdk.s3 :as s3]
+            [clojure.core.async :as a]))
 
 (defn- adjust-options
   [options new-marker n-read]
@@ -24,10 +25,22 @@
         nil))))
 
 (defn object-seq
-  "Return a lazy sequence of objects accepting the same options as
+  "Returns a lazy sequence of objects, accepts the same options as
   `aws.sdk.s3/list-objects`, whose docs you should read and understand
   in order to properly use. The sequence returned will page through
   multiple results if necessary."
   [cred bucket & [options]]
   (object-seq* cred bucket options nil))
 
+(defn object-chan
+  "Returns an S3-object-producing channel, accepts the same options as
+  `aws.sdk.s3/list-objects`, whose docs you should read and understand
+  in order to properly use. The channel returned will page through
+  multiple results if necessary."
+  [cred bucket & [options]]
+  (let [ch (a/chan)]
+    (a/go-loop [xs (object-seq cred bucket options)]
+      (if (seq xs)
+        (do (a/>! ch (first xs))
+            (recur (rest xs)))
+        (a/close! ch)))))
